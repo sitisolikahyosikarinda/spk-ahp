@@ -1,54 +1,38 @@
 import streamlit as st
 import pandas as pd
 import io
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="SPK AHP", layout="wide")
 
-
-# TAMPILAN
-
+# ======================
+# STYLE
+# ======================
 st.markdown("""
 <style>
 .block-container {
     padding-top: 2rem;
-    padding-bottom: 2rem;
     padding-left: 3rem;
     padding-right: 3rem;
-}
-
-h1 {
-    font-size: 40px !important;
-    font-weight: 700;
-}
-
-h2 {
-    font-size: 26px !important;
-    font-weight: 500;
-    color: #444;
-}
-
-.stButton>button {
-    height: 45px;
-    font-size: 16px;
 }
 </style>
 """, unsafe_allow_html=True)
 
-
-# JUDUL & DESKRIPSI
-
+# ======================
+# HEADER
+# ======================
 st.title("📊 Sistem Pendukung Keputusan")
 st.markdown("## Pemilihan Guru Paling Aktif (Metode AHP)")
 st.write("Silahkan isi penilaian dengan memilih kategori yang sesuai.")
 
 st.markdown("---")
 
-
+# ======================
 # DATA
-
+# ======================
 kriteria = {
     "Kehadiran": {
-        "Baik": "Kehadiran > 95%",
+        "Baik": "> 95%",
         "Cukup": "80% – 94%",
         "Kurang": "< 80%"
     },
@@ -68,9 +52,9 @@ kriteria = {
         "Kurang": "< 1"
     },
     "Administrasi": {
-        "Baik": "Lengkap dan tepat waktu pengumpulan",
-        "Cukup": "Cukup lengkap namun pengumpulan agak terlambat.",
-        "Kurang": "Kurang lengkap dan sering terlambat"
+        "Baik": "Lengkap dan tepat waktu",
+        "Cukup": "Cukup lengkap namun terlambat",
+        "Kurang": "Kurang lengkap & sering terlambat"
     }
 }
 
@@ -90,9 +74,9 @@ bobot_sub = {
 
 alternatif = ["Asrunsyah", "Istamin", "Sutiani", "Kasran", "Raminah", "Rukini", "Saleh"]
 
-
+# ======================
 # INPUT
-
+# ======================
 penilaian = {}
 
 st.markdown("### Input Penilaian")
@@ -112,9 +96,9 @@ for guru in alternatif:
 
 st.markdown("---")
 
-
-# PERHITUNGAN (rumus)
-
+# ======================
+# PERHITUNGAN
+# ======================
 if st.button("Hitung Hasil", use_container_width=True):
 
     hasil = {}
@@ -134,33 +118,59 @@ if st.button("Hitung Hasil", use_container_width=True):
     df["Ranking"] = df["Total"].rank(ascending=False).astype(int)
     df_sorted = df.sort_values("Ranking")
 
-  
-    # HASIL
-    
-    st.markdown("### Hasil Perhitungan")
-
-    top_guru = df_sorted.index[0]
-    st.write(f"**Guru Terbaik:** {top_guru}")
-
-    st.dataframe(df_sorted[["Total", "Ranking"]], use_container_width=True)
+    # ======================
+    # DETAIL PERHITUNGAN
+    # ======================
+    st.markdown("### 📊 Detail Perhitungan AHP")
+    st.dataframe(df, use_container_width=True)
 
     st.markdown("---")
 
-    st.bar_chart(df_sorted["Total"], use_container_width=True)
+    # ======================
+    # RANKING
+    # ======================
+    st.markdown("### 🏆 Hasil Perangkingan")
 
-  
-    # EXPORT FILE EXCEL
-    
+    top_guru = df_sorted.index[0]
+    st.success(f"Guru Terbaik: {top_guru}")
+
+    st.dataframe(df_sorted[["Total", "Ranking"]], use_container_width=True)
+
+    # ======================
+    # GRAFIK (SUDAH DIPERBAIKI)
+    # ======================
+    st.markdown("### 📈 Grafik Nilai Akhir")
+
+    df_plot = df_sorted.copy()
+    df_plot["Label"] = df_plot["Ranking"].astype(str) + " - " + df_plot.index
+
+    fig, ax = plt.subplots()
+
+    ax.barh(df_plot["Label"], df_plot["Total"])
+    ax.invert_yaxis()  # ranking 1 di atas
+
+    # tampilkan angka di samping bar
+    for i, v in enumerate(df_plot["Total"]):
+        ax.text(v, i, f"{v:.3f}", va='center')
+
+    ax.set_xlabel("Nilai")
+    ax.set_title("Ranking Guru")
+
+    st.pyplot(fig)
+
+    # ======================
+    # EXPORT EXCEL
+    # ======================
     df_input = pd.DataFrame(penilaian).T
 
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df_input.to_excel(writer, sheet_name='Input')
-        df.to_excel(writer, sheet_name='AHP')
+        df.to_excel(writer, sheet_name='Perhitungan')
         df_sorted.to_excel(writer, sheet_name='Ranking')
 
     st.download_button(
-        "Download Excel",
+        "⬇️ Download Hasil Excel",
         data=output.getvalue(),
         file_name="hasil_ahp.xlsx"
     )
