@@ -39,7 +39,7 @@ h2 {
 
 st.title("📊 Sistem Pendukung Keputusan")
 st.markdown("## Pemilihan Guru Paling Aktif (Metode AHP)")
-st.write("Silakan isi penilaian dengan memilih kategori yang sesuai.")
+st.write("Silahkan isi penilaian dengan memilih kategori yang sesuai.")
 
 st.markdown("---")
 
@@ -54,23 +54,23 @@ kriteria = {
     },
     "Aktivitas Mengajar": {
         "Baik": "Metode variatif & aktif",
-        "Cukup": "Sesuai jadwal",
-        "Kurang": "Kurang aktif"
+        "Cukup": "Sesuai rancangan namun kurang aktif",
+        "Kurang": "Tidak sesuai rancangan & tidak aktif"
     },
-    "Partisipasi": {
-        "Baik": "Aktif",
-        "Cukup": "Sebagian",
-        "Kurang": "Jarang"
+    "Partisipasi Kegiatan Sekolah": {
+        "Baik": "Aktif didalam ataupun diluar sekolah",
+        "Cukup": "Ikut sebagian kegiatan sekolah",
+        "Kurang": "Jarang mengikuti kegiatan"
     },
     "Pengembangan Diri": {
         "Baik": "> 4 pelatihan",
-        "Cukup": "2–4",
-        "Kurang": "< 2"
+        "Cukup": "2–3",
+        "Kurang": "< 1"
     },
     "Administrasi": {
-        "Baik": "Lengkap",
-        "Cukup": "Sebagian",
-        "Kurang": "Sering terlambat"
+        "Baik": "Lengkap dan tepat waktu pengumpulan",
+        "Cukup": "Cukup lengkap namun pengumpulan agak terlambat.",
+        "Kurang": "Kurang lengkap dan sering terlambat"
     }
 }
 
