@@ -77,7 +77,7 @@ kriteria = {
 bobot_kriteria = {
     "Kehadiran": 0.438,
     "Aktivitas Mengajar": 0.256,
-    "Partisipasi": 0.128,
+    "Partisipasi Kegiatan Sekolah": 0.128,
     "Pengembangan Diri": 0.092,
     "Administrasi": 0.084
 }
